@@ -18,7 +18,7 @@ The ''xlabel-gui'' is self-explanatory.
 To get help for the ``xlabel`` command, type ``xlabel -h`` in your terminal.
 
 ## Why
-I need a way to quickly switch between windows of the same application, but it may be used for other use cases too.
+I needed a way to quickly switch between windows of the same application, but it may be used for other use cases too.
 
 ### Why don't you use the window's title for that?
 Because two windows can both have the same or similar title, but not belong to the same application.
