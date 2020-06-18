@@ -15,13 +15,13 @@ Both offer the same functionality but since ``xlabel`` is a command line tool, i
 
 The ''xlabel-gui'' is self-explanatory.
 
-To get help for the ''xlabel'' command, enter the command ''xlabel -h''.
+To get help for the ``xlabel`` command, type ``xlabel -h`` in your terminal.
 
 ## Why
 I need a way to quickly switch between windows of the same application, but it may be used for other use cases too.
 
 ### Why don't you use the window's title for that?
-Because two windows can both have the same or similar name, but not belong to the same application.
+Because two windows can both have the same or similar title, but not belong to the same application.
 
 ### Why don't you use the window's class name for that?
 That works fine for graphical applications, but it doesn't work for terminal applications.
