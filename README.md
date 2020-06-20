@@ -15,7 +15,7 @@ The ''xlabel-gui'' is self-explanatory.
 To get help for the ``xlabel`` command, type ``xlabel -h`` in your terminal.
 
 * You can only have **one** label for eachy window.
-GR
+
 
 ## Installation
 ... TODO
