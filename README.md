@@ -5,8 +5,8 @@ Label any window, and then find it or cycle through windows with the same label.
 
 ## Usage
 Two tools are provided:
-* ``xlabel``       (command line)
-* ``xlabel-gui``
+* (TODO) ``xlabel``       (command line)
+* (TODO)``xlabel-gui``
 
 Both offer the same functionality but since ``xlabel`` is a command line tool, it can be used in scripting.
 
