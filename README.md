@@ -3,9 +3,6 @@
 ## What
 Label any window, and then find it or cycle through windows with the same label.
 
-## Installation
-... TODO
-
 ## Usage
 Two tools are provided:
 * ``xlabel``       (command line)
@@ -16,6 +13,12 @@ Both offer the same functionality but since ``xlabel`` is a command line tool, i
 The ''xlabel-gui'' is self-explanatory.
 
 To get help for the ``xlabel`` command, type ``xlabel -h`` in your terminal.
+
+* You can only have **one** label for eachy window.
+GR
+
+## Installation
+... TODO
 
 ## Why
 I needed a way to quickly switch between windows of the same application, but it may be used for other use cases too.
