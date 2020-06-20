@@ -1,0 +1,118 @@
+#!/bin/sh
+file_init() {
+	if [ -n "$XDG_DATA_HOME" ]
+	then
+		DIR="$XDG_DATA_HOME/xlabel"
+	else
+		DIR="$HOME/.local/share/xlabel"
+	fi
+
+	if [ ! -e "$DIR" ]
+	then
+		mkdir "$DIR"
+	fi
+	
+	FILE="$DIR/xlabel.txt"
+	touch "$FILE"
+}
+
+add() {
+	if [ -z "$WINDOW" ]
+	then
+		WINDOW=$(xdotool getactivewindow)
+	fi
+
+	if grep "$WINDOW" "$FILE" &> /dev/null
+	then
+		echo "That window already has a label." 1>&2
+	else
+		echo "$WINDOW	$LABEL" >> "$FILE"
+	fi
+}
+
+print_help() {
+	echo "
+
+              _/            _/                  _/   
+   _/    _/  _/    _/_/_/  _/_/_/      _/_/    _/    
+    _/_/    _/  _/    _/  _/    _/  _/_/_/_/  _/     
+ _/    _/  _/  _/    _/  _/    _/  _/        _/      
+_/    _/  _/    _/_/_/  _/_/_/      _/_/_/  _/       
+                                                     
+"
+	echo 'Usage: xlabel option 	
+
+	-a <label> [window]
+		Add label to window.
+		If no window is passed, the active window is used.
+	
+	-r [window]
+		Remove label from window.
+		If no window is passed, the active window is used.
+	
+	-s <label>
+		Search all windows for <label>.
+	
+	-f <label>
+		Focus the window with <label>.
+		If many windows with <label> exist, cycle through them.
+	
+	-c <label>
+		Close all windows with <label>.
+	
+	-m <label>
+		Minimize all windows with <label>.
+
+	-p <label>
+		Pick a window by clicking on it and add label to that window.	
+	
+	-h 
+		Print this menu.
+			
+	* Every window can have only one label.
+
+	* The file where the information is stored, is located at 
+			$XDG_DATA_HOME/xlabel/xlabel.txt 
+				or
+			$HOME/.local/share/xlabel/xlabel.txt 
+				if $XDG_DATA_HOME is not defined.'
+	}
+
+while getopts "a:p:rs:f:c:m:h" option
+do
+
+	case "$option"
+		in 
+			[asfcmp])	LABEL="$OPTARG"
+	esac
+
+	case "$option"
+		in
+			a)	function=ADD;;
+			r) 	function=REMOVE;;
+			s) 	function=SEARCH;;
+			f)	function=FOCUS;;
+			c)	function=CLOSE;;
+			m)	function=MINIMIZE;;
+			p)	function=PICK;;
+			h) 	print_help;;
+			\?)	print_help;;
+
+		esac
+done
+
+shift $((OPTIND-1))
+
+WINDOW=$1  							# WINDOW might be empty
+
+file_init
+
+case "$function" 
+	in
+		ADD) add;;
+		REMOVE):;;
+		SEARCH):;;
+		FOCUS):;;
+		CLOSE):;;
+		MINIMIZE):;;
+esac	
