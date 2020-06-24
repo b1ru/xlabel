@@ -16,7 +16,7 @@ file_init() {
 	touch "$FILE"
 }
 
-add() {
+add_label() {
 	if [ -z "$WINDOW" ]
 	then
 		WINDOW=$(xdotool getactivewindow)
@@ -28,6 +28,40 @@ add() {
 	else
 		echo "$WINDOW	$LABEL" >> "$FILE"
 	fi
+}
+
+raise_window() {
+	# All the windows with the given label
+	WINDOWS=$(grep "$LABEL" "$FILE" | cut -f 1)
+	# A window with the given label
+	WINDOW=$(echo "$WINDOWS" | head -1)
+
+	# The active window
+	ACTIVE=$(xdotool getactivewindow)
+
+	if [ "$ACTIVE" = "$WINDOW" ]
+	then
+		WINDOW=$(echo "$WINDOWS" | head -2 | tail -1)
+	fi
+
+	# Try to raise WINDOW
+	xdotool windowraise "$WINDOW" 
+
+	# If you didn't manage to raise it, that means WINDOW doesn't exist -it has been closed-.
+	# 	Update FILE.	
+	while [ $? -ne 0 ] && grep  "$LABEL" "$FILE"
+	do
+		grep -v "$WINDOW" "$FILE" > "$DIR/xlabel.txt.tmp"
+		mv "$DIR/xlabel.txt.tmp" "$FILE"
+		WINDOWS=$(grep "$LABEL" "$FILE" | cut -f 1)
+		WINDOW=$(echo "$WINDOWS" | head -1)
+		if [ "$ACTIVE" = "$WINDOW" ]
+		then
+			WINDOW=$(echo "$WINDOWS" | head -2 | tail -1)
+		fi
+		xdotool windowraise "$WINDOW"
+	done
+
 }
 
 print_help() {
@@ -46,15 +80,18 @@ _/    _/  _/    _/_/_/  _/_/_/      _/_/_/  _/
 		Add label to window.
 		If no window is passed, the active window is used.
 	
-	-r [window]
-		Remove label from window.
+	-d [window]
+		Delete label from window.
 		If no window is passed, the active window is used.
-	
-	-s <label>
-		Search all windows for <label>.
+
+	-p
+		Print the windows that have labels.
 	
 	-f <label>
-		Focus the window with <label>.
+		Find all windows with <label>.
+	
+	-r <label>
+		Raise the window with <label>.
 		If many windows with <label> exist, cycle through them.
 	
 	-c <label>
@@ -63,14 +100,14 @@ _/    _/  _/    _/_/_/  _/_/_/      _/_/_/  _/
 	-m <label>
 		Minimize all windows with <label>.
 
-	-p <label>
-		Pick a window by clicking on it and add label to that window.	
+	-s <label>
+		Select a window by clicking on it and add label to that window.	
 	
 	-h 
 		Print this menu.
 			
 	* Every window can have only one label.
-
+	* [TODO] what is the WINDOW argument
 	* The file where the information is stored, is located at 
 			$XDG_DATA_HOME/xlabel/xlabel.txt 
 				or
@@ -78,23 +115,24 @@ _/    _/  _/    _/_/_/  _/_/_/      _/_/_/  _/
 				if $XDG_DATA_HOME is not defined.'
 	}
 
-while getopts "a:p:rs:f:c:m:h" option
+while getopts "a:dpf:r:c:m:s:h" option
 do
 
 	case "$option"
 		in 
-			[asfcmp])	LABEL="$OPTARG"
+			[afrcms])	LABEL="$OPTARG"
 	esac
 
 	case "$option"
 		in
 			a)	function=ADD;;
-			r) 	function=REMOVE;;
-			s) 	function=SEARCH;;
-			f)	function=FOCUS;;
+			d)  function=DELETE;;
+			p) 	function=PRINT;;
+			f)	function=FIND;;
+			r)	function=RAISE;;
 			c)	function=CLOSE;;
 			m)	function=MINIMIZE;;
-			p)	function=PICK;;
+			s)	function=SELECT;;
 			h) 	print_help;;
 			\?)	print_help;;
 
@@ -109,10 +147,10 @@ file_init
 
 case "$function" 
 	in
-		ADD) add;;
+		ADD) add_label;;
 		REMOVE):;;
 		SEARCH):;;
-		FOCUS):;;
+		RAISE)raise_window;;
 		CLOSE):;;
 		MINIMIZE):;;
 esac	
