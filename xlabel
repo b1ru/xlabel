@@ -51,12 +51,13 @@ add_label() {
 }
 
 raise_window() {
+	remove_nonexistent
+
 	# All the windows with the given label
 	WINDOWS=$(grep "$LABEL" "$FILE" | cut -f 1)
 	# A window with the given label
 	WINDOW=$(echo "$WINDOWS" | head -1)
 
-	# The active window
 	ACTIVE=$(xdotool getactivewindow)
 
 	if [ "$ACTIVE" = "$WINDOW" ]
@@ -64,23 +65,10 @@ raise_window() {
 		WINDOW=$(echo "$WINDOWS" | head -2 | tail -1)
 	fi
 
-	# Try to raise WINDOW
-	xdotool windowraise "$WINDOW" 
-
-	# If you didn't manage to raise it, that means WINDOW doesn't exist -it has been closed-.
-	# 	Update FILE.	
-	while [ $? -ne 0 ] && grep  "$LABEL" "$FILE"
-	do
-		grep -v "$WINDOW" "$FILE" > "$DIR/xlabel.txt.tmp"
-		mv "$DIR/xlabel.txt.tmp" "$FILE"
-		WINDOWS=$(grep "$LABEL" "$FILE" | cut -f 1)
-		WINDOW=$(echo "$WINDOWS" | head -1)
-		if [ "$ACTIVE" = "$WINDOW" ]
-		then
-			WINDOW=$(echo "$WINDOWS" | head -2 | tail -1)
-		fi
+	if [ -n "$WINDOW" ]
+	then
 		xdotool windowraise "$WINDOW"
-	done
+	fi
 
 }
 
