@@ -1,4 +1,24 @@
 #!/bin/sh
+remove_nonexistent() {
+	# removes from FILE windows that don't exist anymore
+	i=1
+	lines=$(wc -l "$FILE"  | cut -d' ' -f1)
+	while [ "$i" -le "$lines" ]
+	do
+		line=$(head "-$i" "$FILE" | tail -1)
+		id=$(echo "$line" | cut -f 1)
+
+		xdotool getwindowname "$id" &> /dev/null
+
+		if [ $? -ne 0 ]
+		then
+			grep -v "$id" "$FILE" > "$DIR/xlabel.txt.tmp"
+			mv "$DIR/xlabel.txt.tmp" "$FILE"
+		fi
+		i=$((i+1))
+	done
+}
+
 file_init() {
 	if [ -n "$XDG_DATA_HOME" ]
 	then
@@ -62,6 +82,23 @@ raise_window() {
 		xdotool windowraise "$WINDOW"
 	done
 
+}
+
+print_labels() {
+	remove_nonexistent
+	echo "LABEL		CLASS		TITLE"
+	i=1
+	lines=$(wc -l "$FILE"  | cut -d' ' -f1)
+	while [ "$i" -le "$lines" ]
+	do
+		line=$(head "-$i" "$FILE" | tail -1)
+		id=$(echo "$line" | cut -f 1)
+		label=$(echo "$line" | cut -f 2)
+		class=$(xprop -id "$id" | grep CLASS | cut -d ' ' -f 4 | tr -d ,\")
+		title=$(xdotool getwindowname "$id")
+		echo "$label		$class		$title"
+		i=$((i+1))
+	done
 }
 
 print_help() {
@@ -133,8 +170,8 @@ do
 			c)	function=CLOSE;;
 			m)	function=MINIMIZE;;
 			s)	function=SELECT;;
-			h) 	print_help;;
-			\?)	print_help;;
+			h) 	function=HELP;;	
+			\?)	function=HELP;;
 
 		esac
 done
@@ -148,9 +185,12 @@ file_init
 case "$function" 
 	in
 		ADD) add_label;;
-		REMOVE):;;
-		SEARCH):;;
+		DELETE):;;
+		PRINT)print_labels;;
+		FIND):;;
 		RAISE)raise_window;;
 		CLOSE):;;
 		MINIMIZE):;;
+		SELECT):;;
+		HELP):;;
 esac	
