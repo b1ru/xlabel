@@ -89,7 +89,7 @@ raise_window() {
 
 print_labels() {
 	remove_nonexistent
-	echo "ID		LABEL	CLASS	TITLE"
+	printf '%-10.10s %-15.15s %-10.10s %s\n' ID LABEL CLASS TITLE
 	i=1
 	lines=$(wc -l "$FILE"  | cut -d' ' -f1)
 	while [ "$i" -le "$lines" ]
@@ -99,7 +99,7 @@ print_labels() {
 		label=$(echo "$line" | cut -f 2)
 		class=$(xprop -id "$id" | grep CLASS | cut -d ' ' -f 4 | tr -d ,\")
 		title=$(xdotool getwindowname "$id")
-		echo "$id	$label	$class	$title"
+		printf '%-10.10s %-15.15s %-10.10s %s\n' "$id"	"$label"	"$class"	"$title"
 		i=$((i+1))
 	done
 }
@@ -127,6 +127,18 @@ minimize_windows() {
 	do
 		xdotool windowminimize "$WIN"
 	done
+}
+
+select_window() {
+	id=$(xdotool selectwindow)
+
+	if grep "$id" "$FILE" &> /dev/null
+	then
+		echo "That window already has a label." 1>&2
+	else
+		echo "$id	$LABEL" >> "$FILE"
+	fi
+
 }
 
 print_help() {
@@ -218,7 +230,7 @@ case "$function"
 		FIND)find_windows_nice;;
 		RAISE)raise_window;;
 		CLOSE)close_windows;;
-		MINIMIZE):;;
-		SELECT):;;
+		MINIMIZE)minimize_windows;;
+		SELECT)select_window;;
 		HELP)print_help;;
 esac	
