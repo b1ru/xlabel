@@ -10,8 +10,8 @@ To get help for the ``xlabel`` command, type ``xlabel -h`` in your terminal.
 
 
 ## Installation
-* Make sure you have ''xdotool'' installed.
-* ''xlabel'' is just a shell script, so just download it, make it executable and run it.
+* Make sure you have ``xdotool`` installed.
+* ``xlabel`` is just a shell script, so just download it, make it executable and run it.
 
 ## Why
 I needed a way to quickly switch between windows of the same application, but it may be used for other use cases too.
