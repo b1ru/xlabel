@@ -50,6 +50,20 @@ add_label() {
 	fi
 }
 
+delete_label() {
+	if [ -z "$WINDOW" ]
+	then
+		WINDOW=$(xdotool getactivewindow)
+	fi
+	if grep "$WINDOW" "$FILE" &> /dev/null
+	then
+		grep -v "$WINDOW" "$FILE" > "$DIR/xlabel.txt.tmp"
+		mv "$DIR/xlabel.txt.tmp" "$FILE"
+	else
+		echo "This window doesn't have a label"
+	fi
+	
+}
 raise_window() {
 	remove_nonexistent
 
@@ -173,7 +187,7 @@ file_init
 case "$function" 
 	in
 		ADD) add_label;;
-		DELETE):;;
+		DELETE)delete_label;;
 		PRINT)print_labels;;
 		FIND):;;
 		RAISE)raise_window;;
