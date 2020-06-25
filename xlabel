@@ -64,6 +64,7 @@ delete_label() {
 	fi
 	
 }
+
 raise_window() {
 	remove_nonexistent
 
@@ -88,7 +89,7 @@ raise_window() {
 
 print_labels() {
 	remove_nonexistent
-	echo "LABEL		CLASS		TITLE"
+	echo "ID		LABEL	CLASS	TITLE"
 	i=1
 	lines=$(wc -l "$FILE"  | cut -d' ' -f1)
 	while [ "$i" -le "$lines" ]
@@ -98,9 +99,16 @@ print_labels() {
 		label=$(echo "$line" | cut -f 2)
 		class=$(xprop -id "$id" | grep CLASS | cut -d ' ' -f 4 | tr -d ,\")
 		title=$(xdotool getwindowname "$id")
-		echo "$label		$class		$title"
+		echo "$id	$label	$class	$title"
 		i=$((i+1))
 	done
+}
+
+find_windows() {
+	remove_nonexistent
+	echo "ID		LABEL"
+	grep "$LABEL" "$FILE"
+
 }
 
 print_help() {
@@ -189,7 +197,7 @@ case "$function"
 		ADD) add_label;;
 		DELETE)delete_label;;
 		PRINT)print_labels;;
-		FIND):;;
+		FIND)find_windows;;
 		RAISE)raise_window;;
 		CLOSE):;;
 		MINIMIZE):;;
