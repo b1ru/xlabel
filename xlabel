@@ -104,11 +104,29 @@ print_labels() {
 	done
 }
 
+find_windows_nice() {
+	echo "ID		LABEL"
+	find_windows
+}
 find_windows() {
 	remove_nonexistent
-	echo "ID		LABEL"
 	grep "$LABEL" "$FILE"
+}
 
+close_windows() {
+	WINDOWS=$(find_windows | cut -f 1)
+	for WIN in $WINDOWS
+	do
+		xdotool windowclose "$WIN"
+	done
+}
+
+minimize_windows() {
+	WINDOWS=$(find_windows | cut -f 1)
+	for WIN in $WINDOWS
+	do
+		xdotool windowminimize "$WIN"
+	done
 }
 
 print_help() {
@@ -197,10 +215,10 @@ case "$function"
 		ADD) add_label;;
 		DELETE)delete_label;;
 		PRINT)print_labels;;
-		FIND)find_windows;;
+		FIND)find_windows_nice;;
 		RAISE)raise_window;;
-		CLOSE):;;
+		CLOSE)close_windows;;
 		MINIMIZE):;;
 		SELECT):;;
-		HELP):;;
+		HELP)print_help;;
 esac	
